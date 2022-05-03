@@ -1,3 +1,10 @@
 from django.test import TestCase
 
-# Create your tests here.
+
+class QuickstartTests(TestCase):
+
+    def test_this_will_pass(self):
+        self.assertTrue(True)
+
+    def test_this_will_also_pass(self):
+        self.assertFalse(False)
