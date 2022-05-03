@@ -22,6 +22,7 @@ jobs:
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
     steps:
+      - checkout
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
