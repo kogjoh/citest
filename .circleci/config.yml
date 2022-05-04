@@ -29,6 +29,9 @@ jobs:
           keys: 
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - run:
+          name: hehe
+          command: ls -la
+      - run:
           name: Activate virtual environment
           command: . venv/bin/activate
       - run:
