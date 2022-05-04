@@ -1,7 +1,18 @@
 version: 2.1
 
+commands:
+  initialize_step:
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - v1-repo-{{ checksum "requirements.txt" }}
+      - run:
+          name: Activate virtual environment
+          command: echo "source venv/bin/activate" >> $BASH_ENV
+
 jobs:
-  checkout_and_build:
+  build:
     docker:
       - image: cimg/python:3.10.3
     steps:
@@ -20,13 +31,7 @@ jobs:
     docker:
       - image: cimg/python:3.10.3
     steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - v1-repo-{{ checksum "requirements.txt" }}
-      - run:
-          name: Activate environment
-          command: echo "source venv/bin/activate" >> $BASH_ENV
+      - initialize_step
       - run:
           name: Run tests
           command: python3 manage.py test
@@ -34,7 +39,7 @@ jobs:
 workflows:
   sample:
     jobs:
-      - checkout_and_build
+      - build
       - test:
           requires:
-            - checkout_and_build
+            - build
