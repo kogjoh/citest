@@ -24,13 +24,11 @@ jobs:
           keys: 
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - run:
-          name: hehe
-          command: ls -la
+          name: Activate environment
+          command: . venv/bin/activate
       - run:
           name: Run tests
-          command: |
-            . venv/bin/activate
-            python3 manage.py test
+          command: python3 manage.py test
 
 workflows:
   sample:
