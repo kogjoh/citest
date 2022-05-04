@@ -1,42 +1,36 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@1.5.0
-
 jobs:
-  build:
+  checkout_and_build:
     docker:
       - image: cimg/python:3.10.3
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-          # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
-          # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
+      - run:
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - "."
+
   test:
     docker:
       - image: cimg/python:3.10.3
-    # Checkout the code as the first step. This is a dedicated CircleCI step.
-    # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
-    # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
-    # Then run your tests!
-    # CircleCI will report the results back to your VCS provider.
     steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
+      - restore_cache:
+          keys: 
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Run tests
-          # This assumes pytest is installed via the install-package step above
           command: python manage.py test
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  sample:
     jobs:
-      - build
+      - checkout_and_build
       - test:
           requires:
-            - build
+            - checkout_and_build
