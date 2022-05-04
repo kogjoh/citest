@@ -25,7 +25,7 @@ jobs:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Activate environment
-          command: echo "source /path/to/virtualenv/bin/activate" >> $BASH_ENV
+          command: echo "source venv/bin/activate" >> $BASH_ENV
       - run:
           name: Run tests
           command: python3 manage.py test
